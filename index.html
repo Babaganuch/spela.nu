@@ -7,17 +7,52 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-menu">
-        <div class="logo">
-            <div class="logo-bg"></div>
-            <div class="logo-eye left-eye"></div>
-            <div class="logo-eye right-eye"></div>
-            <div class="logo-mouth"></div>
+    <div class="main-container">
+        <header>
+            <div class="logo">
+                <div class="logo-shape"></div>
+                <div class="logo-eyes">
+                    <div class="eye"></div>
+                    <div class="eye"></div>
+                </div>
+            </div>
+            <h1 class="rainbow-text">Jag vill spela.nu</h1>
+        </header>
+        
+        <div class="games-grid">
+            <button class="game-button" onclick="loadGame('snake')">
+                <span class="game-icon">🐍</span>
+                <span>Snake IO</span>
+            </button>
+            <button class="game-button" onclick="loadGame('geometry-dash')">
+                <span class="game-icon">🔷</span>
+                <span>Geometry Dash Lite</span>
+            </button>
+            <button class="game-button" onclick="loadGame('go-around')">
+                <span class="game-icon">🎮</span>
+                <span>Go Around</span>
+            </button>
+            <button class="game-button" onclick="loadGame('beaver-clicker')">
+                <span class="game-icon">🦫</span>
+                <span>Bäver Clicker</span>
+            </button>
+            <button class="game-button" onclick="loadGame('flappy-bird')">
+                <span class="game-icon">🐦</span>
+                <span>Flappy Bird</span>
+            </button>
+            <button class="game-button" onclick="loadGame('block-blast')">
+                <span class="game-icon">🧱</span>
+                <span>Block Blast</span>
+            </button>
+            <button class="game-button" onclick="loadGame('minecraft')">
+                <span class="game-icon">⛏️</span>
+                <span>Minecraft</span>
+            </button>
         </div>
-        <h1 class="rainbow-text">Jag vill spela.nu</h1>
-        <div class="game-grid" id="gameGrid"></div>
     </div>
-    <div class="game-container" id="gameContainer"></div>
-    <script src="app.js"></script>
+    
+    <div id="game-container"></div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
