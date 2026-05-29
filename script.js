@@ -203,13 +203,6 @@ function loadGame(gameId) {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-        
-    }
-    
-    updateScoreDisplay();        case '2048': init2048Game(); break;
-    }
-    
-    updateScoreDisplay();        case '2048': init2048Game(); break;
     }
     
     updateScoreDisplay();
@@ -244,7 +237,8 @@ function restartGame() {
         case 'block-blast': initBlockBlastGame(); break;
         
     }
-}
+}        case '2048': init2048Game(); break;
+    }
         case '2048': init2048Game(); break;
     }
 
@@ -276,7 +270,8 @@ function nextLevel() {
         case 'block-blast': initBlockBlastGame(); break;
         
     }
-}
+}        case '2048': init2048Game(); break;
+    }
         case '2048': init2048Game(); break;
     }
 
