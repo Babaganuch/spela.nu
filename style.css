@@ -583,3 +583,65 @@ body {
         width: 100%;
     }
 }
+/* Tic Tac Toe Styles */
+.tic-tac-toe-game {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.tic-tac-toe-status {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.tic-tac-toe-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tic-tac-toe-cell {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #333;
+}
+
+.tic-tac-toe-cell:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+.tic-tac-toe-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.tic-tac-toe-controls button {
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.tic-tac-toe-controls button:hover {
+    background: #45a049;
+}

@@ -45,11 +45,22 @@ const gamesConfig = {
         pointsPerLevel: [15, 25, 35, 45, 55],
         colors: []
     },
-    'minecraft': {
     '2048': {
         name: '2048',
         levels: 5,
         pointsPerLevel: [50, 100, 200, 400, 800],
+        colors: []
+    },
+    'tic-tac-toe': {
+        name: 'Tick Tack Go',
+        levels: 5,
+        pointsPerLevel: [10, 20, 30, 40, 50],
+        colors: []
+    },
+    'shark-clicker': {
+        name: 'Haj Clicker',
+        levels: 5,
+        pointsPerLevel: [20, 40, 60, 80, 100],
         colors: []
     },
     'minecraft': {
@@ -68,8 +79,9 @@ let userProgress = {
     'beaver-clicker': { level: 1, score: 0, unlocked: true },
     'flappy-bird': { level: 1, score: 0, unlocked: true },
     'block-blast': { level: 1, score: 0, unlocked: false },
-    minecraft: {
     '2048': { level: 1, score: 0, unlocked: true },
+    'tic-tac-toe': { level: 1, score: 0, unlocked: true },
+    'shark-clicker': { level: 1, score: 0, unlocked: true },
     minecraft: { level: 1, score: 0, unlocked: false }
 };
 
@@ -235,10 +247,11 @@ function restartGame() {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-        
+        case 'tic-tac-toe': initTicTacToeGame(); break;
+        case 'shark-clicker': initSharkClickerGame(); break;
         case '2048': init2048Game(); break;
-}        }
-        }
+    }
+}
 
 // Next Level
 function nextLevel() {
@@ -266,10 +279,11 @@ function nextLevel() {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
+        case 'tic-tac-toe': initTicTacToeGame(); break;
+        case 'shark-clicker': initSharkClickerGame(); break;
         case '2048': init2048Game(); break;
     }
 }
-        }
 
 // Reset All Levels
 function resetAllLevels() {
@@ -771,7 +785,77 @@ function updateClickerDisplay() {
     updateScoreDisplay();
 }
 
-// ==================== FLAPPY BIRD ====================
+// ==================== SHARK CLICKER ====================
+function initSharkClickerGame() {
+    gameActive = true;
+    clickerScore = 0;
+    score = 0;
+    updateScoreDisplay();
+    
+    const container = document.querySelector('.game-wrapper');
+    const canvasElement = document.getElementById('game-canvas');
+    canvasElement.style.display = 'none';
+    
+    const clickerHtml = `
+        <div class="clicker-display">
+            <div class="clicker-count" id="clicker-count">0</div>
+            <div class="clicker-beaver" onclick="clickShark()">🦈</div>
+            <div style="font-size: 1.2rem; margin: 10px 0;">Poäng per klick: <span id="multiplier-display">${clickerMultiplier}</span></div>
+            <div style="font-size: 1.2rem; margin: 10px 0;">Auto-clickers: <span id="auto-clicker-count">${autoClickers}</span></div>
+            
+            <div class="upgrade-item">
+                <div>
+                    <strong>Auto-clicker</strong><br>
+                    <small>Kostar: 50 poäng</small>
+                </div>
+                <button onclick="buyAutoClicker()">Köpa</button>
+            </div>
+            
+            <div class="upgrade-item">
+                <div>
+                    <strong>Dubbla poäng</strong><br>
+                    <small>Kostar: 100 poäng</small>
+                </div>
+                <button onclick="buyDoublePoints()">Köpa</button>
+            </div>
+            
+            <div class="upgrade-item">
+                <div>
+                    <strong>Trippla poäng</strong><br>
+                    <small>Kostar: 300 poäng</small>
+                </div>
+                <button onclick="buyTriplePoints()">Köpa</button>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = container.innerHTML.replace(canvasElement.outerHTML, '') + clickerHtml;
+    
+    if (autoClickerLoop) clearInterval(autoClickerLoop);
+    autoClickerLoop = setInterval(() => {
+        if (gameActive && currentGame === 'shark-clicker') {
+            clickerScore = Math.min(clickerScore + autoClickers * 0.1 * clickerMultiplier, 200);
+            score += autoClickers * 0.1 * clickerMultiplier;
+            updateClickerDisplay();
+        }
+    }, 100);
+}
+
+function clickShark() {
+    if (!gameActive || currentGame !== 'shark-clicker') return;
+    
+    clickerScore = Math.min(clickerScore + clickerMultiplier, 200);
+    score += clickerMultiplier;
+    updateClickerDisplay();
+    
+    const shark = document.querySelector('.clicker-beaver');
+    shark.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        shark.style.transform = 'scale(1)';
+    }, 100);
+}
+
+// ==================== FLAPPY BIRD ========================================
 let fbBird = {x: 100, y: 250, width: 40, height: 30, velocityY: 0, gravity: 0.5, jumpForce: -8};
 let fbPipes = [];
 let fbPipeGap = 150;
@@ -1632,6 +1716,99 @@ function draw2048Game() {
         ctx.fillText('Fortsätt spela!', canvas.width / 2, canvas.height / 2 + 10);
     }
 };
+
+// ==================== TIC TAC TOE ====================
+let ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+let ticTacToeCurrentPlayer = 'X';
+let ticTacToeGameOver = false;
+
+function initTicTacToeGame() {
+    gameActive = true;
+    ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
+    ticTacToeCurrentPlayer = 'X';
+    ticTacToeGameOver = false;
+    score = 0;
+    updateScoreDisplay();
+    
+    const container = document.querySelector('.game-wrapper');
+    const canvasElement = document.getElementById('game-canvas');
+    canvasElement.style.display = 'none';
+    
+    const ticTacToeHtml = `
+        <div class="tic-tac-toe-game">
+            <div class="tic-tac-toe-status">Spelare: <span id="current-player">X</span></div>
+            <div class="tic-tac-toe-board">
+                ${createTicTacToeCells()}
+            </div>
+            <div class="tic-tac-toe-controls">
+                <button onclick="resetTicTacToeGame()" class="btn btn-primary">Starta om</button>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = container.innerHTML.replace(canvasElement.outerHTML, '') + ticTacToeHtml;
+}
+
+function createTicTacToeCells() {
+    let cells = '';
+    for (let i = 0; i < 9; i++) {
+        cells += `<div class="tic-tac-toe-cell" onclick="makeTicTacToeMove(${i})">${ticTacToeBoard[i]}</div>`;
+    }
+    return cells;
+}
+
+function makeTicTacToeMove(cellIndex) {
+    if (ticTacToeGameOver || ticTacToeBoard[cellIndex] !== '') return;
+    
+    ticTacToeBoard[cellIndex] = ticTacToeCurrentPlayer;
+    
+    // Update UI
+    const cells = document.querySelectorAll('.tic-tac-toe-cell');
+    cells[cellIndex].textContent = ticTacToeCurrentPlayer;
+    
+    // Check for win
+    if (checkTicTacToeWin()) {
+        ticTacToeGameOver = true;
+        score += 10;
+        updateScoreDisplay();
+        setTimeout(() => alert(`Spelare ${ticTacToeCurrentPlayer} vann!`), 100);
+        return;
+    }
+    
+    // Check for draw
+    if (ticTacToeBoard.every(cell => cell !== '')) {
+        ticTacToeGameOver = true;
+        score += 5;
+        updateScoreDisplay();
+        setTimeout(() => alert('Oavgjort!'), 100);
+        return;
+    }
+    
+    // Switch player
+    ticTacToeCurrentPlayer = ticTacToeCurrentPlayer === 'X' ? 'O' : 'X';
+    document.getElementById('current-player').textContent = ticTacToeCurrentPlayer;
+}
+
+function checkTicTacToeWin() {
+    const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+        [0, 4, 8], [2, 4, 6]             // diagonals
+    ];
+    
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (ticTacToeBoard[a] && ticTacToeBoard[a] === ticTacToeBoard[b] && ticTacToeBoard[a] === ticTacToeBoard[c]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function resetTicTacToeGame() {
+    initTicTacToeGame();
+}
+
 // Initialize on page load
 window.addEventListener('load', () => {
     selectedColor = gamesConfig.snake.colors[0];
