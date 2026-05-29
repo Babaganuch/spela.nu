@@ -46,6 +46,13 @@ const gamesConfig = {
         colors: []
     },
     'minecraft': {
+    '2048': {
+        name: '2048',
+        levels: 5,
+        pointsPerLevel: [50, 100, 200, 400, 800],
+        colors: []
+    },
+    'minecraft': {
         name: 'Minecraft',
         levels: 5,
         pointsPerLevel: [20, 30, 40, 50, 60],
@@ -61,6 +68,8 @@ let userProgress = {
     'beaver-clicker': { level: 1, score: 0, unlocked: true },
     'flappy-bird': { level: 1, score: 0, unlocked: true },
     'block-blast': { level: 1, score: 0, unlocked: false },
+    minecraft: {
+    '2048': { level: 1, score: 0, unlocked: true },
     minecraft: { level: 1, score: 0, unlocked: false }
 };
 
@@ -198,6 +207,7 @@ function loadGame(gameId) {
     }
     
     updateScoreDisplay();
+        case '2048': init2048Game(); break;
 }
 
 // Back to Menu
@@ -229,6 +239,8 @@ function restartGame() {
         
     }
 }
+        case '2048': init2048Game(); break;
+    }
 
 // Next Level
 function nextLevel() {
@@ -259,6 +271,8 @@ function nextLevel() {
         
     }
 }
+        case '2048': init2048Game(); break;
+    }
 
 // Reset All Levels
 function resetAllLevels() {
@@ -1086,6 +1100,11 @@ window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' && bbPaddle.x + bbPaddle.width < canvas.width) bbPaddle.x += bbPaddle.speed;
             break;
             
+        case 'minecraft':
+        case '2048':
+            handle2048KeyPress(e);
+            break;
+        
         case 'minecraft':
             const mcSpeed = mcPlayer.speed;
             switch(e.key) {
