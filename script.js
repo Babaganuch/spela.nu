@@ -237,8 +237,6 @@ function restartGame() {
         case 'block-blast': initBlockBlastGame(); break;
         
     }        case '2048': init2048Game(); break;
-            case '2048': init2048Game(); break;
-    
 }        }
         }
 
@@ -268,8 +266,6 @@ function nextLevel() {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-                case '2048': init2048Game(); break;
-
     }
 }        }
         }
