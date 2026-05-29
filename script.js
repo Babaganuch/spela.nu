@@ -1114,6 +1114,509 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+
+
+// ==================== 2048 GAME ====================
+
+// 2048 Game Variables
+let game2048 = {
+    grid: null,
+    size: 4,
+    tiles: [],
+    gameOver: false,
+    won: false,
+    score: 0
+};
+
+// Colors for different tile values
+const tileColors = {
+    0: '#CDC1B4',
+    2: '#EEE4DA',
+    4: '#EDE0C8',
+    8: '#F2B179',
+    16: '#F59563',
+    32: '#F67C5F',
+    64: '#F65E3B',
+    128: '#EDCF72',
+    256: '#EDCC61',
+    512: '#EDC850',
+    1024: '#EDC53F',
+    2048: '#EDC22E',
+    4096: '#3E3933',
+    8192: '#3E3933'
+};
+
+// Text colors for tiles
+const tileTextColors = {
+    0: '#F9F6F2',
+    2: '#776E65',
+    4: '#776E65',
+    8: '#F9F6F2',
+    16: '#F9F6F2',
+    32: '#F9F6F2',
+    64: '#F9F6F2',
+    128: '#F9F6F2',
+    256: '#F9F6F2',
+    512: '#F9F6F2',
+    1024: '#F9F6F2',
+    2048: '#F9F6F2',
+    4096: '#F9F6F2',
+    8192: '#F9F6F2'
+};
+
+// Initialize 2048 Game
+function init2048Game() {
+    gameActive = true;
+    game2048.grid = create2048Grid();
+    game2048.tiles = [];
+    game2048.gameOver = false;
+    game2048.won = false;
+    game2048.score = 0;
+    
+    // Add initial tiles
+    addRandomTile();
+    addRandomTile();
+    
+    // Clear any existing game loop
+    if (gameLoop) {
+        clearInterval(gameLoop);
+        gameLoop = null;
+    }
+    
+    // Start game loop for rendering
+    gameLoop = setInterval(() => {
+        if (currentGame === '2048' && gameActive) {
+            draw2048Game();
+        }
+    }, 1000 / 60);
+    
+    // Draw initial state
+    draw2048Game();
+}
+
+// Create empty grid
+function create2048Grid() {
+    const grid = [];
+    for (let i = 0; i < game2048.size; i++) {
+        grid[i] = [];
+        for (let j = 0; j < game2048.size; j++) {
+            grid[i][j] = 0;
+        }
+    }
+    return grid;
+}
+
+// Add a random tile (2 or 4) to an empty cell
+function addRandomTile() {
+    const emptyCells = [];
+    
+    for (let i = 0; i < game2048.size; i++) {
+        for (let j = 0; j < game2048.size; j++) {
+            if (game2048.grid[i][j] === 0) {
+                emptyCells.push({i, j});
+            }
+        }
+    }
+    
+    if (emptyCells.length > 0) {
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        game2048.grid[randomCell.i][randomCell.j] = Math.random() < 0.9 ? 2 : 4;
+    }
+}
+
+// Handle keyboard input for 2048
+function handle2048KeyPress(e) {
+    if (!gameActive || game2048.gameOver) return;
+    
+    let moved = false;
+    
+    switch(e.key) {
+        case 'ArrowUp':
+            moved = moveUp();
+            break;
+        case 'ArrowDown':
+            moved = moveDown();
+            break;
+        case 'ArrowLeft':
+            moved = moveLeft();
+            break;
+        case 'ArrowRight':
+            moved = moveRight();
+            break;
+    }
+    
+    if (moved) {
+        addRandomTile();
+        draw2048Game();
+        
+        // Check if game is over
+        if (isGameOver()) {
+            game2048.gameOver = true;
+            gameActive = false;
+            score = game2048.score;
+            updateScoreDisplay();
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('game-over').classList.add('active');
+        }
+        
+        // Check if player won (reached 2048)
+        if (!game2048.won && hasWon()) {
+            game2048.won = true;
+        }
+    }
+}
+
+// Move tiles left
+function moveLeft() {
+    let moved = false;
+    const newGrid = [];
+    
+    for (let i = 0; i < game2048.size; i++) {
+        const row = game2048.grid[i].filter(val => val !== 0);
+        const newRow = [];
+        let j = 0;
+        
+        while (j < row.length) {
+            if (j + 1 < row.length && row[j] === row[j + 1]) {
+                newRow.push(row[j] * 2);
+                game2048.score += row[j] * 2;
+                score = game2048.score;
+                updateScoreDisplay();
+                j += 2;
+                moved = true;
+            } else {
+                newRow.push(row[j]);
+                j++;
+            }
+        }
+        
+        while (newRow.length < game2048.size) {
+            newRow.push(0);
+        }
+        
+        if (JSON.stringify(newRow) !== JSON.stringify(game2048.grid[i])) {
+            moved = true;
+        }
+        
+        newGrid[i] = newRow;
+    }
+    
+    if (moved) {
+        game2048.grid = newGrid;
+    }
+    
+    return moved;
+}
+
+// Move tiles right
+function moveRight() {
+    let moved = false;
+    const newGrid = [];
+    
+    for (let i = 0; i < game2048.size; i++) {
+        const row = game2048.grid[i].filter(val => val !== 0).reverse();
+        const newRow = [];
+        let j = 0;
+        
+        while (j < row.length) {
+            if (j + 1 < row.length && row[j] === row[j + 1]) {
+                newRow.push(row[j] * 2);
+                game2048.score += row[j] * 2;
+                score = game2048.score;
+                updateScoreDisplay();
+                j += 2;
+                moved = true;
+            } else {
+                newRow.push(row[j]);
+                j++;
+            }
+        }
+        
+        while (newRow.length < game2048.size) {
+            newRow.unshift(0);
+        }
+        
+        if (JSON.stringify(newRow) !== JSON.stringify(game2048.grid[i])) {
+            moved = true;
+        }
+        
+        newGrid[i] = newRow;
+    }
+    
+    if (moved) {
+        game2048.grid = newGrid;
+    }
+    
+    return moved;
+}
+
+// Move tiles up
+function moveUp() {
+    let moved = false;
+    const newGrid = [];
+    
+    for (let j = 0; j < game2048.size; j++) {
+        const col = [];
+        for (let i = 0; i < game2048.size; i++) {
+            if (game2048.grid[i][j] !== 0) {
+                col.push(game2048.grid[i][j]);
+            }
+        }
+        
+        const newCol = [];
+        let k = 0;
+        
+        while (k < col.length) {
+            if (k + 1 < col.length && col[k] === col[k + 1]) {
+                newCol.push(col[k] * 2);
+                game2048.score += col[k] * 2;
+                score = game2048.score;
+                updateScoreDisplay();
+                k += 2;
+                moved = true;
+            } else {
+                newCol.push(col[k]);
+                k++;
+            }
+        }
+        
+        while (newCol.length < game2048.size) {
+            newCol.push(0);
+        }
+        
+        for (let i = 0; i < game2048.size; i++) {
+            if (!newGrid[i]) {
+                newGrid[i] = [];
+            }
+            newGrid[i][j] = newCol[i];
+        }
+    }
+    
+    for (let i = 0; i < game2048.size; i++) {
+        if (JSON.stringify(newGrid[i]) !== JSON.stringify(game2048.grid[i])) {
+            moved = true;
+            break;
+        }
+    }
+    
+    if (moved) {
+        game2048.grid = newGrid;
+    }
+    
+    return moved;
+}
+
+// Move tiles down
+function moveDown() {
+    let moved = false;
+    const newGrid = [];
+    
+    for (let j = 0; j < game2048.size; j++) {
+        const col = [];
+        for (let i = game2048.size - 1; i >= 0; i--) {
+            if (game2048.grid[i][j] !== 0) {
+                col.push(game2048.grid[i][j]);
+            }
+        }
+        
+        const newCol = [];
+        let k = 0;
+        
+        while (k < col.length) {
+            if (k + 1 < col.length && col[k] === col[k + 1]) {
+                newCol.push(col[k] * 2);
+                game2048.score += col[k] * 2;
+                score = game2048.score;
+                updateScoreDisplay();
+                k += 2;
+                moved = true;
+            } else {
+                newCol.push(col[k]);
+                k++;
+            }
+        }
+        
+        while (newCol.length < game2048.size) {
+            newCol.unshift(0);
+        }
+        
+        for (let i = 0; i < game2048.size; i++) {
+            if (!newGrid[i]) {
+                newGrid[i] = [];
+            }
+            newGrid[i][j] = newCol[i];
+        }
+    }
+    
+    for (let i = 0; i < game2048.size; i++) {
+        if (JSON.stringify(newGrid[i]) !== JSON.stringify(game2048.grid[i])) {
+            moved = true;
+            break;
+        }
+    }
+    
+    if (moved) {
+        game2048.grid = newGrid;
+    }
+    
+    return moved;
+}
+
+// Check if game is over (no more moves possible)
+function isGameOver() {
+    // Check if there are any empty cells
+    for (let i = 0; i < game2048.size; i++) {
+        for (let j = 0; j < game2048.size; j++) {
+            if (game2048.grid[i][j] === 0) {
+                return false;
+            }
+        }
+    }
+    
+    // Check if any merges are possible
+    for (let i = 0; i < game2048.size; i++) {
+        for (let j = 0; j < game2048.size - 1; j++) {
+            if (game2048.grid[i][j] === game2048.grid[i][j + 1]) {
+                return false;
+            }
+        }
+    }
+    
+    for (let j = 0; j < game2048.size; j++) {
+        for (let i = 0; i < game2048.size - 1; i++) {
+            if (game2048.grid[i][j] === game2048.grid[i + 1][j]) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
+// Check if player has won (reached 2048 tile)
+function hasWon() {
+    for (let i = 0; i < game2048.size; i++) {
+        for (let j = 0; j < game2048.size; j++) {
+            if (game2048.grid[i][j] >= 2048) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Draw 2048 game
+function draw2048Game() {
+    if (!canvas || !ctx) return;
+    
+    // Clear canvas
+    ctx.fillStyle = '#FAF8EF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw background grid
+    const cellSize = Math.min(
+        (canvas.width - 20) / game2048.size,
+        (canvas.height - 80) / game2048.size
+    );
+    const startX = (canvas.width - cellSize * game2048.size) / 2;
+    const startY = (canvas.height - cellSize * game2048.size) / 2 + 20;
+    
+    // Draw grid background
+    ctx.fillStyle = '#BBADA0';
+    for (let i = 0; i < game2048.size; i++) {
+        for (let j = 0; j < game2048.size; j++) {
+            ctx.fillRect(
+                startX + j * cellSize + 5,
+                startY + i * cellSize + 5,
+                cellSize - 10,
+                cellSize - 10
+            );
+        }
+    }
+    
+    // Draw tiles
+    for (let i = 0; i < game2048.size; i++) {
+        for (let j = 0; j < game2048.size; j++) {
+            const value = game2048.grid[i][j];
+            if (value > 0) {
+                const tileColor = tileColors[value] || '#3E3933';
+                const textColor = tileTextColors[value] || '#F9F6F2';
+                const fontSize = value < 100 ? cellSize / 2 : 
+                                value < 1000 ? cellSize / 3 : 
+                                cellSize / 4;
+                
+                // Draw tile with rounded corners
+                const x = startX + j * cellSize + 5;
+                const y = startY + i * cellSize + 5;
+                const width = cellSize - 10;
+                const height = cellSize - 10;
+                const radius = 5;
+                
+                ctx.fillStyle = tileColor;
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw tile value
+                ctx.fillStyle = textColor;
+                ctx.font = 'bold ' + fontSize + 'px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(
+                    value.toString(),
+                    startX + j * cellSize + cellSize / 2,
+                    startY + i * cellSize + cellSize / 2
+                );
+            }
+        }
+    }
+    
+    // Draw score at the top
+    ctx.fillStyle = '#776E65';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Poäng: ' + game2048.score, 20, 30);
+    
+    // Draw instructions
+    ctx.fillStyle = '#776E65';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Använd piltangenter för att flytta', canvas.width / 2, canvas.height - 20);
+    
+    // If game is over
+    if (game2048.gameOver) {
+        ctx.fillStyle = 'rgba(238, 228, 218, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#776E65';
+        ctx.font = 'bold 40px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Game Over!', canvas.width / 2, canvas.height / 2);
+    }
+    
+    // If player won
+    if (game2048.won && !game2048.gameOver) {
+        ctx.fillStyle = 'rgba(238, 228, 218, 0.3)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#F9F6F2';
+        ctx.font = 'bold 30px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Du vann!', canvas.width / 2, canvas.height / 2 - 40);
+        ctx.fillText('Fortsätt spela!', canvas.width / 2, canvas.height / 2 + 10);
+    }
+};
 // Initialize on page load
 window.addEventListener('load', () => {
     selectedColor = gamesConfig.snake.colors[0];
