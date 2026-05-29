@@ -5,7 +5,7 @@ let gdObstacleSpeed = 5;
 let gdObstacleTimer = 0;
 let gdScore = 0;
 
-function initGeometryDashGame() {
+export function initGeometryDashGame() {
     gameActive = true;
     gdPlayer.x = 50;
     gdPlayer.y = canvas.height - 100;

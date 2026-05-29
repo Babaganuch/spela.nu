@@ -6,7 +6,7 @@ const bbGridHeight = Math.floor(canvas.height / bbGridSize);
 let bbSelectedBlock = null;
 let bbScore = 0;
 
-function initBlockBlastGame() {
+export function initBlockBlastGame() {
     gameActive = true;
     bbScore = 0;
     score = 0;

@@ -9,6 +9,7 @@ let gameActive = false;
 let gameLoop = null;
 let canvas = null;
 let ctx = null;
+let modulesLoaded = false;
 
 // Game Configurations
 const gamesConfig = {
@@ -103,24 +104,59 @@ const levelBackgrounds = [
 // Selected color for games with color options
 let selectedColor = '#FF5733';
 
+// Global game functions - will be populated by module imports
+window.initSnakeGame = null;
+window.initGeometryDashGame = null;
+window.initGoAroundGame = null;
+window.initBeaverClickerGame = null;
+window.initFlappyBirdGame = null;
+window.initBlockBlastGame = null;
+window.init2048Game = null;
+window.initTicTacToeGame = null;
+window.initSharkClickerGame = null;
+window.initMinecraftGame = null;
+
 // Load Game Modules
-function loadGameModules() {
-    return Promise.all([
-        import('./games/snake.js'),
-        import('./games/geometry-dash.js'),
-        import('./games/go-around.js'),
-        import('./games/beaver-clicker.js'),
-        import('./games/flappy-bird.js'),
-        import('./games/block-blast.js'),
-        import('./games/2048.js'),
-        import('./games/tic-tac-toe.js'),
-        import('./games/shark-clicker.js'),
-        import('./games/minecraft.js')
-    ]);
+async function loadGameModules() {
+    try {
+        const modules = await Promise.all([
+            import('./games/snake.js'),
+            import('./games/geometry-dash.js'),
+            import('./games/go-around.js'),
+            import('./games/beaver-clicker.js'),
+            import('./games/flappy-bird.js'),
+            import('./games/block-blast.js'),
+            import('./games/2048.js'),
+            import('./games/tic-tac-toe.js'),
+            import('./games/shark-clicker.js'),
+            import('./games/minecraft.js')
+        ]);
+        
+        // Assign functions to global scope
+        window.initSnakeGame = modules[0].initSnakeGame;
+        window.initGeometryDashGame = modules[1].initGeometryDashGame;
+        window.initGoAroundGame = modules[2].initGoAroundGame;
+        window.initBeaverClickerGame = modules[3].initBeaverClickerGame;
+        window.initFlappyBirdGame = modules[4].initFlappyBirdGame;
+        window.initBlockBlastGame = modules[5].initBlockBlastGame;
+        window.init2048Game = modules[6].init2048Game;
+        window.initTicTacToeGame = modules[7].initTicTacToeGame;
+        window.initSharkClickerGame = modules[8].initSharkClickerGame;
+        window.initMinecraftGame = modules[9].initMinecraftGame;
+        
+        console.log('All game modules loaded successfully');
+    } catch (error) {
+        console.error('Failed to load game modules:', error);
+    }
 }
 
 // Load Game
 function loadGame(gameId) {
+    if (!modulesLoaded) {
+        alert('Vänligen vänta, spel laddas...');
+        return;
+    }
+    
     currentGame = gameId;
     currentLevel = userProgress[gameId].level;
     score = 0;
@@ -337,11 +373,29 @@ function selectColor(color, element) {
 // Initialize the application
 async function init() {
     try {
+        // Show loading indicator
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'block';
+        }
+        
+        // Set initial selected color immediately
+        selectedColor = gamesConfig.snake.colors[0];
+        
+        // Load game modules
         await loadGameModules();
         console.log('All game modules loaded successfully');
+        modulesLoaded = true;
         
-        // Set initial selected color
-        selectedColor = gamesConfig.snake.colors[0];
+        // Hide loading indicator
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+        }
+        
+        // Enable game buttons
+        document.querySelectorAll('.game-button').forEach(button => {
+            button.disabled = false;
+        });
         
         // Add event listeners for keyboard controls
         window.addEventListener('keydown', (e) => {

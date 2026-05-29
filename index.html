@@ -20,39 +20,43 @@
         </header>
         
         <div class="games-grid">
-            <button class="game-button snake" onclick="loadGame('snake')">
+            <div id="loading-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.5rem; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 10px; display: none;">
+                Laddar spel...<br>
+                <span style="font-size: 1rem;">Vänligen vänta</span>
+            </div>
+            <button class="game-button snake" onclick="loadGame('snake')" disabled>
                 <span class="game-icon">🐍</span>
                 <span>Snake IO</span>
             </button>
-            <button class="game-button geometry-dash" onclick="loadGame('geometry-dash')">
+            <button class="game-button geometry-dash" onclick="loadGame('geometry-dash')" disabled>
                 <span class="game-icon">🔷</span>
                 <span>Geometry Dash Lite</span>
             </button>
-            <button class="game-button go-around" onclick="loadGame('go-around')">
+            <button class="game-button go-around" onclick="loadGame('go-around')" disabled>
                 <span class="game-icon">🎮</span>
                 <span>Go Around</span>
             </button>
-            <button class="game-button beaver-clicker" onclick="loadGame('beaver-clicker')">
+            <button class="game-button beaver-clicker" onclick="loadGame('beaver-clicker')" disabled>
                 <span class="game-icon">🦫</span>
                 <span>Bäver Clicker</span>
             </button>
-            <button class="game-button flappy-bird" onclick="loadGame('flappy-bird')">
+            <button class="game-button flappy-bird" onclick="loadGame('flappy-bird')" disabled>
                 <span class="game-icon">🐦</span>
                 <span>Flappy Bird</span>
             </button>
-            <button class="game-button block-blast" onclick="loadGame('block-blast')">
+            <button class="game-button block-blast" onclick="loadGame('block-blast')" disabled>
                 <span class="game-icon">🧱</span>
                 <span>Block Blast</span>
             </button>
-            <button class="game-button game-2048" onclick="loadGame('2048')">
+            <button class="game-button game-2048" onclick="loadGame('2048')" disabled>
                 <span class="game-icon">🔢</span>
                 <span>2048</span>
             </button>
-            <button class="game-button tic-tac-toe" onclick="loadGame('tic-tac-toe')">
+            <button class="game-button tic-tac-toe" onclick="loadGame('tic-tac-toe')" disabled>
                 <span class="game-icon">❌⭕</span>
                 <span>Tick Tack Go</span>
             </button>
-            <button class="game-button shark-clicker" onclick="loadGame('shark-clicker')">
+            <button class="game-button shark-clicker" onclick="loadGame('shark-clicker')" disabled>
                 <span class="game-icon">🦈</span>
                 <span>Haj Clicker</span>
             </button>
