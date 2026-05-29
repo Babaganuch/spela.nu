@@ -1101,13 +1101,26 @@ window.addEventListener('keydown', (e) => {
         case '2048':
             handle2048KeyPress(e);
             break;
-        
+            
         case 'minecraft':
-            handle2048KeyPress(e);
-            break;
-        
-        case 'minecraft':
-        }
+            const mcSpeed = mcPlayer.speed;
+            switch(e.key) {
+                case 'ArrowUp': mcPlayer.y -= mcSpeed; break;
+                case 'ArrowDown': mcPlayer.y += mcSpeed; break;
+                case 'ArrowLeft': mcPlayer.x -= mcSpeed; break;
+                case 'ArrowRight': mcPlayer.x += mcSpeed; break;
+                case ' ':
+                    for (let i = 0; i < mcBlocks.length; i++) {
+                        const block = mcBlocks[i];
+                        if (Math.abs(mcPlayer.x + mcPlayer.width/2 - (block.x + block.width/2)) < 30 &&
+                            Math.abs(mcPlayer.y - mcPlayer.height/2 - (block.y + block.height/2)) < 30) {
+                            
+                            mcInventory[block.type]++;
+                            score++;
+                            updateScoreDisplay();
+                            mcBlocks.splice(i, 1);
+                            break;
+                        }
                     }
                     break;
             }
@@ -1115,7 +1128,7 @@ window.addEventListener('keydown', (e) => {
             mcPlayer.y = Math.max(mcPlayer.height, Math.min(canvas.height, mcPlayer.y));
             break;
     }
-});
+});;
 
 
 
