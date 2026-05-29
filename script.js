@@ -460,22 +460,17 @@ function updateGeometryDash() {
     
     gdPlayer.x += gdGameSpeed + (currentLevel * 0.5);
     
-    if (!gdPlayer.jumping) {
-        gdPlayer.velocityY += 0.8;
-    }
+    // Apply gravity
+    gdPlayer.velocityY += 0.8;
+    
+    // Apply velocity to position
     gdPlayer.y += gdPlayer.velocityY;
     
+    // Ground collision
     if (gdPlayer.y + gdPlayer.height > canvas.height - 20) {
         gdPlayer.y = canvas.height - 20 - gdPlayer.height;
         gdPlayer.velocityY = 0;
         gdPlayer.jumping = false;
-    }
-    
-    if (gdPlayer.jumping) {
-        gdPlayer.velocityY -= 0.8;
-        if (gdPlayer.velocityY <= 0) {
-            gdPlayer.jumping = false;
-        }
     }
     
     for (let i = 0; i < gdObstacles.length; i++) {
@@ -1063,7 +1058,7 @@ window.addEventListener('keydown', (e) => {
             
         case 'geometry-dash':
             if (e.key === ' ' && !gdPlayer.jumping) {
-                gdPlayer.velocityY = 12;
+                gdPlayer.velocityY = -12;
                 gdPlayer.jumping = true;
             }
             break;
