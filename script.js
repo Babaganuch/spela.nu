@@ -209,6 +209,9 @@ function loadGame(gameId) {
     updateScoreDisplay();        case '2048': init2048Game(); break;
     }
     
+    updateScoreDisplay();        case '2048': init2048Game(); break;
+    }
+    
     updateScoreDisplay();
         case '2048': init2048Game(); break;
 }
