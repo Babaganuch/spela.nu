@@ -202,7 +202,8 @@ function loadGame(gameId) {
         case 'go-around': initGoAroundGame(); break;
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
-        case 'block-blast': initBlockBlastGame(); break;
+        case 'block-blast': initBlockBlastGame(); break;        case '2048': init2048Game(); break;
+
     }
     
     updateScoreDisplay();
@@ -267,7 +268,8 @@ function nextLevel() {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-        
+                case '2048': init2048Game(); break;
+
     }
 }        }
         }
@@ -1098,7 +1100,11 @@ window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' && bbPaddle.x + bbPaddle.width < canvas.width) bbPaddle.x += bbPaddle.speed;
             break;
             
-        case 'minecraft':        case '2048':
+        case '2048':
+            handle2048KeyPress(e);
+            break;
+        
+        case 'minecraft':
             handle2048KeyPress(e);
             break;
         
