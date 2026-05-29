@@ -147,6 +147,14 @@ body {
     background: rgba(0, 188, 212, 0.8);
 }
 
+.game-button.tic-tac-toe {
+    background: rgba(96, 125, 139, 0.8);
+}
+
+.game-button.chicken-clicker {
+    background: rgba(255, 215, 0, 0.8);
+}
+
 /* Game Container */
 #game-container {
     display: none;
@@ -270,6 +278,126 @@ body {
     display: block;
     margin: 0 auto;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* Tic Tac Toe Grid */
+.ttt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 300px;
+}
+
+.ttt-cell {
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid white;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ttt-cell:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.ttt-cell.x {
+    color: #ff5733;
+}
+
+.ttt-cell.o {
+    color: #33ff57;
+}
+
+.ttt-cell.winner {
+    background: rgba(255, 215, 0, 0.5);
+    animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.ttt-status {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    color: white;
+    text-align: center;
+}
+
+/* Clicker Game Specific */
+.clicker-display {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.clicker-count {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ffd700;
+}
+
+.clicker-beaver {
+    font-size: 8rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    margin: 20px 0;
+}
+
+.clicker-beaver:active {
+    transform: scale(0.95);
+}
+
+.clicker-chicken {
+    font-size: 8rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    margin: 20px 0;
+}
+
+.clicker-chicken:active {
+    transform: scale(0.95);
+}
+
+.clicker-upgrades {
+    margin-top: 20px;
+}
+
+.upgrade-item {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.upgrade-item button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.upgrade-item button:hover {
+    background: #45a049;
 }
 
 /* Game Over Screen */
@@ -400,58 +528,6 @@ body {
 .color-option.selected {
     box-shadow: 0 0 15px white;
     transform: scale(1.1);
-}
-
-/* Clicker Game Specific */
-.clicker-display {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.clicker-count {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #ffd700;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px #ffd700;
-}
-
-.clicker-beaver {
-    font-size: 8rem;
-    cursor: pointer;
-    transition: transform 0.1s ease;
-    margin: 20px 0;
-}
-
-.clicker-beaver:active {
-    transform: scale(0.95);
-}
-
-.upgrade-item {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid #fff;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.upgrade-item button {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.upgrade-item button:hover {
-    background: #45a049;
 }
 
 /* Responsive */
