@@ -3,9 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test</title>
+    <title>Jag vill spela.nu</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Test</h1>
+    <div class="main-container">
+        <header>
+            <div class="logo">
+                <div class="logo-shape"></div>
+                <div class="logo-eyes">
+                    <div class="eye"></div>
+                    <div class="eye"></div>
+                </div>
+            </div>
+            <h1 class="rainbow-text">Jag vill spela.nu</h1>
+        </header>
+        
+        <div class="games-grid">
+            <button class="game-button snake" onclick="loadGame('snake')">
+                <span class="game-icon">🐍</span>
+                <span>Snake IO</span>
+            </button>
+            <button class="game-button geometry-dash" onclick="loadGame('geometry-dash')">
+                <span class="game-icon">🔷</span>
+                <span>Geometry Dash Lite</span>
+            </button>
+            <button class="game-button go-around" onclick="loadGame('go-around')">
+                <span class="game-icon">🎮</span>
+                <span>Go Around</span>
+            </button>
+            <button class="game-button beaver-clicker" onclick="loadGame('beaver-clicker')">
+                <span class="game-icon">🦫</span>
+                <span>Bäver Clicker</span>
+            </button>
+            <button class="game-button flappy-bird" onclick="loadGame('flappy-bird')">
+                <span class="game-icon">🐦</span>
+                <span>Flappy Bird</span>
+            </button>
+            <button class="game-button block-blast" onclick="loadGame('block-blast')">
+                <span class="game-icon">🧱</span>
+                <span>Block Blast</span>
+            </button>
+            <button class="game-button game-2048" onclick="loadGame('2048')">
+                <span class="game-icon">🔢</span>
+                <span>2048</span>
+            </button>
+            <button class="game-button tic-tac-toe" onclick="loadGame('tic-tac-toe')">
+                <span class="game-icon">❌⭕</span>
+                <span>Tick Tack Go</span>
+            </button>
+            <button class="game-button shark-clicker" onclick="loadGame('shark-clicker')">
+                <span class="game-icon">🦈</span>
+                <span>Haj Clicker</span>
+            </button>
+        </div>
+    </div>
+    
+    <div id="game-container"></div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
