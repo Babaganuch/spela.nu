@@ -268,7 +268,7 @@ function nextLevel() {
         case 'block-blast': initBlockBlastGame(); break;
         case '2048': init2048Game(); break;
     }
-}        }
+}
         }
 
 // Reset All Levels
