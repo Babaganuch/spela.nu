@@ -699,7 +699,7 @@ function initBeaverClickerGame() {
     if (autoClickerLoop) clearInterval(autoClickerLoop);
     autoClickerLoop = setInterval(() => {
         if (gameActive && currentGame === 'beaver-clicker') {
-            clickerScore += autoClickers * 0.1 * clickerMultiplier;
+            clickerScore = Math.min(clickerScore + autoClickers * 0.1 * clickerMultiplier, 200);
             score += autoClickers * 0.1 * clickerMultiplier;
             updateClickerDisplay();
         }
@@ -709,7 +709,7 @@ function initBeaverClickerGame() {
 function clickBeaver() {
     if (!gameActive || currentGame !== 'beaver-clicker') return;
     
-    clickerScore += clickerMultiplier;
+    clickerScore = Math.min(clickerScore + clickerMultiplier, 200);
     score += clickerMultiplier;
     updateClickerDisplay();
     
