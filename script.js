@@ -194,7 +194,7 @@ function loadGame(gameId) {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-        case 'minecraft': initMinecraftGame(); break;
+        
     }
     
     updateScoreDisplay();
@@ -226,7 +226,7 @@ function restartGame() {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-        case 'minecraft': initMinecraftGame(); break;
+        
     }
 }
 
@@ -256,7 +256,7 @@ function nextLevel() {
         case 'beaver-clicker': initBeaverClickerGame(); break;
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
-        case 'minecraft': initMinecraftGame(); break;
+        
     }
 }
 
@@ -461,7 +461,7 @@ function updateGeometryDash() {
     gdPlayer.x += gdGameSpeed + (currentLevel * 0.5);
     
     // Apply gravity
-    gdPlayer.velocityY += 0.8;
+    gdPlayer.velocityY += 1.5;  // ÖKAD GRAVITATION
     
     // Apply velocity to position
     gdPlayer.y += gdPlayer.velocityY;
