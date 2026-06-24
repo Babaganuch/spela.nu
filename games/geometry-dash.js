@@ -1,11 +1,12 @@
 // Geometry Dash Game
-const gdPlayer = {x: 50, y: canvas.height - 100, width: 40, height: 40, velocityY: 0, jumping: false, jumpForce: -12, gravity: 0.8};
+let gdPlayer = {x: 50, y: 0, width: 40, height: 40, velocityY: 0, jumping: false, jumpForce: -12, gravity: 0.8};
 const gdObstacles = [];
 let gdObstacleSpeed = 5;
 let gdObstacleTimer = 0;
 let gdScore = 0;
 
 function initGeometryDashGame() {
+    gdPlayer.y = canvas.height - 100;
     gameActive = true;
     gdPlayer.x = 50;
     gdPlayer.y = canvas.height - 100;

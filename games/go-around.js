@@ -1,7 +1,7 @@
 // Go Around (Lol Beans) Game
-const goAroundPlayer = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
+let goAroundPlayer = {
+    x: 0,
+    y: 0,
     radius: 20,
     speed: 3,
     direction: 0,
@@ -13,6 +13,8 @@ let goAroundBotTimer = 0;
 let goAroundScore = 0;
 
 function initGoAroundGame() {
+    goAroundPlayer.x = canvas.width / 2;
+    goAroundPlayer.y = canvas.height / 2;
     gameActive = true;
     goAroundPlayer.x = canvas.width / 2;
     goAroundPlayer.y = canvas.height / 2;

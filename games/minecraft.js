@@ -1,5 +1,5 @@
 // Minecraft Game
-const mcPlayer = {x: canvas.width/2, y: canvas.height/2, width: 40, height: 60, speed: 3};
+let mcPlayer = {x: 0, y: 0, width: 40, height: 60, speed: 3};
 const mcBlocks = [];
 const mcInventory = {wood: 0, stone: 0, diamond: 0};
 let mcScore = 0;

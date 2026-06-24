@@ -1,12 +1,14 @@
 // Block Blast Game
 const bbGrid = [];
 const bbGridSize = 50;
-const bbGridWidth = Math.floor(canvas.width / bbGridSize);
-const bbGridHeight = Math.floor(canvas.height / bbGridSize);
+let bbGridWidth = 0;
+let bbGridHeight = 0;
 let bbSelectedBlock = null;
 let bbScore = 0;
 
 function initBlockBlastGame() {
+    bbGridWidth = Math.floor(canvas.width / bbGridSize);
+    bbGridHeight = Math.floor(canvas.height / bbGridSize);
     gameActive = true;
     bbScore = 0;
     score = 0;

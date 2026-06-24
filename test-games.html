@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Game Loading Test</h1>
+    <button onclick="testSnake()">Test Snake Game</button>
+    <button onclick="testAllGames()">Test All Games</button>
+    <div id="output"></div>
+    
+    <script src="script.js"></script>
+    <script>
+        function log(message) {
+            const output = document.getElementById('output');
+            output.innerHTML += message + '<br>';
+            console.log(message);
+        }
+        
+        async function testSnake() {
+            log('Testing Snake game...');
+            try {
+                // Load the snake game script
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = './games/snake.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+                
+                log('Snake script loaded');
+                
+                // Check if initSnakeGame exists
+                if (typeof initSnakeGame === 'function') {
+                    log('✓ initSnakeGame function exists');
+                } else {
+                    log('✗ initSnakeGame function NOT found');
+                }
+                
+                // Check if canvas is accessible
+                log('canvas variable: ' + (typeof canvas !== 'undefined' ? 'exists' : 'NOT defined'));
+                log('ctx variable: ' + (typeof ctx !== 'undefined' ? 'exists' : 'NOT defined'));
+                log('gameActive variable: ' + (typeof gameActive !== 'undefined' ? 'exists' : 'NOT defined'));
+                
+            } catch (error) {
+                log('✗ Error: ' + error.message);
+            }
+        }
+        
+        async function testAllGames() {
+            log('Testing all game scripts...');
+            const games = [
+                'snake', 'geometry-dash', 'go-around', 'beaver-clicker', 
+                'flappy-bird', 'block-blast', '2048', 'tic-tac-toe', 
+                'shark-clicker', 'minecraft'
+            ];
+            
+            for (const game of games) {
+                try {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = `./games/${game}.js`;
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                    log(`✓ ${game}.js loaded successfully`);
+                } catch (error) {
+                    log(`✗ ${game}.js failed: ${error.message}`);
+                }
+            }
+            
+            log('\nChecking global variables:');
+            log('window.canvas: ' + (typeof window.canvas !== 'undefined' ? 'exists' : 'NOT defined'));
+            log('window.ctx: ' + (typeof window.ctx !== 'undefined' ? 'exists' : 'NOT defined'));
+            log('window.gameActive: ' + (typeof window.gameActive !== 'undefined' ? 'exists' : 'NOT defined'));
+            log('window.score: ' + (typeof window.score !== 'undefined' ? 'exists' : 'NOT defined'));
+            log('window.gamesConfig: ' + (typeof window.gamesConfig !== 'undefined' ? 'exists' : 'NOT defined'));
+            
+            log('\nChecking game init functions:');
+            const initFunctions = [
+                'initSnakeGame', 'initGeometryDashGame', 'initGoAroundGame', 
+                'initBeaverClickerGame', 'initFlappyBirdGame', 'initBlockBlastGame',
+                'init2048Game', 'initTicTacToeGame', 'initSharkClickerGame', 'initMinecraftGame'
+            ];
+            
+            for (const func of initFunctions) {
+                log(`${func}: ${typeof window[func] !== 'undefined' ? '✓ exists' : '✗ NOT found'}`);
+            }
+        }
+    </script>
+</body>
+</html>

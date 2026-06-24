@@ -1,18 +1,18 @@
 // Main Game Script - Modular Version
 // This file handles the core game loading and UI, while individual games are loaded from separate files
 
-// Game State
-let currentGame = null;
-let currentLevel = 1;
-let score = 0;
-let gameActive = false;
-let gameLoop = null;
-let canvas = null;
-let ctx = null;
-let modulesLoaded = false;
+// Game State - stored on window so game modules can access them
+window.currentGame = null;
+window.currentLevel = 1;
+window.score = 0;
+window.gameActive = false;
+window.gameLoop = null;
+window.canvas = null;
+window.ctx = null;
+window.modulesLoaded = false;
 
 // Game Configurations
-const gamesConfig = {
+window.gamesConfig = {
     'snake': {
         name: 'Snake IO',
         levels: 5,
@@ -76,7 +76,7 @@ const gamesConfig = {
 };
 
 // User Progress
-let userProgress = {
+window.userProgress = {
     snake: { level: 1, score: 0, unlocked: true },
     'geometry-dash': { level: 1, score: 0, unlocked: true },
     'go-around': { level: 1, score: 0, unlocked: true },
@@ -90,7 +90,7 @@ let userProgress = {
 };
 
 // Background colors for levels
-const levelBackgrounds = [
+window.levelBackgrounds = [
     'linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d)',
     'linear-gradient(135deg, #22c1c3, #fdbb2d)',
     'linear-gradient(135deg, #667eea, #764ba2)',
@@ -102,7 +102,7 @@ const levelBackgrounds = [
 ];
 
 // Selected color for games with color options
-let selectedColor = '#FF5733';
+window.selectedColor = '#FF5733';
 
 // Global game functions - will be populated by module imports
 window.initSnakeGame = null;
@@ -161,29 +161,29 @@ function loadGameModules() {
 
 // Load Game
 function loadGame(gameId) {
-    if (!modulesLoaded) {
+    if (!window.modulesLoaded) {
         alert('Vänligen vänta, spel laddas...');
         return;
     }
     
-    currentGame = gameId;
-    currentLevel = userProgress[gameId].level;
-    score = 0;
+    window.currentGame = gameId;
+    window.currentLevel = window.userProgress[gameId].level;
+    window.score = 0;
     
-    const gameConfig = gamesConfig[gameId];
+    const gameConfig = window.gamesConfig[gameId];
     const container = document.getElementById('game-container');
     container.innerHTML = '';
     container.classList.add('active');
     
     const wrapper = document.createElement('div');
     wrapper.className = 'game-wrapper';
-    wrapper.style.background = levelBackgrounds[currentLevel - 1] || levelBackgrounds[0];
+    wrapper.style.background = window.levelBackgrounds[window.currentLevel - 1] || window.levelBackgrounds[0];
     
     // Game Header
     const header = document.createElement('div');
     header.className = 'game-header';
     header.innerHTML = `
-        <div class="game-title">${gameConfig.name} - Nivå ${currentLevel}</div>
+        <div class="game-title">${gameConfig.name} - Nivå ${window.currentLevel}</div>
         <div class="game-controls">
             <button class="btn btn-back" onclick="backToMenu()">Tillbaka till spel</button>
         </div>
@@ -194,8 +194,8 @@ function loadGame(gameId) {
     const info = document.createElement('div');
     info.className = 'game-info';
     info.innerHTML = `
-        <div class="score-display">Poäng: <span id="current-score">0</span> / ${gameConfig.pointsPerLevel[currentLevel - 1] || 10}</div>
-        <div class="level-display">Nivå: ${currentLevel} / ${gameConfig.levels}</div>
+        <div class="score-display">Poäng: <span id="current-score">0</span> / ${gameConfig.pointsPerLevel[window.currentLevel - 1] || 10}</div>
+        <div class="level-display">Nivå: ${window.currentLevel} / ${gameConfig.levels}</div>
     `;
     wrapper.appendChild(info);
     
@@ -209,7 +209,7 @@ function loadGame(gameId) {
             colorOption.className = 'color-option';
             colorOption.style.backgroundColor = color;
             colorOption.onclick = () => selectColor(color, colorOption);
-            if (color === selectedColor) {
+            if (color === window.selectedColor) {
                 colorOption.classList.add('selected');
             }
             settings.appendChild(colorOption);
@@ -244,7 +244,7 @@ function loadGame(gameId) {
     levelComplete.className = 'level-complete';
     levelComplete.id = 'level-complete';
     levelComplete.innerHTML = `
-        <h2>Nivå ${currentLevel} Klar!</h2>
+        <h2>Nivå ${window.currentLevel} Klar!</h2>
         <div style="font-size: 1.5rem; margin-bottom: 20px;">Dina poäng: <span id="level-score">0</span></div>
         <div class="game-over-buttons">
             <button class="btn btn-primary" onclick="nextLevel()">Till nästa nivå</button>
@@ -268,8 +268,8 @@ function loadGame(gameId) {
     container.appendChild(wrapper);
     
     // Initialize game
-    canvas = canvasElement;
-    ctx = canvas.getContext('2d');
+    window.canvas = canvasElement;
+    window.ctx = canvasElement.getContext('2d');
     
     // Start the specific game (this will be handled by the imported module)
     switch(gameId) {
@@ -291,23 +291,23 @@ function loadGame(gameId) {
 // Back to Menu
 function backToMenu() {
     document.getElementById('game-container').classList.remove('active');
-    if (gameLoop) {
-        clearInterval(gameLoop);
-        gameLoop = null;
+    if (window.gameLoop) {
+        clearInterval(window.gameLoop);
+        window.gameLoop = null;
     }
-    gameActive = false;
+    window.gameActive = false;
     // Save progress
-    if (currentGame) {
-        userProgress[currentGame].score = Math.max(userProgress[currentGame].score, score);
+    if (window.currentGame) {
+        window.userProgress[window.currentGame].score = Math.max(window.userProgress[window.currentGame].score, window.score);
     }
 }
 
 // Restart Game
 function restartGame() {
     document.getElementById('game-over').classList.remove('active');
-    score = 0;
+    window.score = 0;
     updateScoreDisplay();
-    switch(currentGame) {
+    switch(window.currentGame) {
         case 'snake': initSnakeGame(); break;
         case 'geometry-dash': initGeometryDashGame(); break;
         case 'go-around': initGoAroundGame(); break;
@@ -324,23 +324,23 @@ function restartGame() {
 // Next Level
 function nextLevel() {
     document.getElementById('level-complete').classList.remove('active');
-    currentLevel++;
-    userProgress[currentGame].level = currentLevel;
-    score = 0;
+    window.currentLevel++;
+    window.userProgress[window.currentGame].level = window.currentLevel;
+    window.score = 0;
     updateScoreDisplay();
     
     const wrapper = document.querySelector('.game-wrapper');
-    wrapper.style.background = levelBackgrounds[currentLevel - 1] || levelBackgrounds[0];
+    wrapper.style.background = window.levelBackgrounds[window.currentLevel - 1] || window.levelBackgrounds[0];
     
     document.querySelector('.game-title').textContent = 
-        `${gamesConfig[currentGame].name} - Nivå ${currentLevel}`;
+        `${window.gamesConfig[window.currentGame].name} - Nivå ${window.currentLevel}`;
     
     document.querySelector('.level-display').textContent = 
-        `Nivå: ${currentLevel} / ${gamesConfig[currentGame].levels}`;
+        `Nivå: ${window.currentLevel} / ${window.gamesConfig[window.currentGame].levels}`;
     
     document.getElementById('current-score').textContent = '0';
     
-    switch(currentGame) {
+    switch(window.currentGame) {
         case 'snake': initSnakeGame(); break;
         case 'geometry-dash': initGeometryDashGame(); break;
         case 'go-around': initGoAroundGame(); break;
@@ -357,9 +357,9 @@ function nextLevel() {
 // Reset All Levels
 function resetAllLevels() {
     document.getElementById('all-levels-complete').classList.remove('active');
-    userProgress[currentGame].level = 1;
-    currentLevel = 1;
-    score = 0;
+    window.userProgress[window.currentGame].level = 1;
+    window.currentLevel = 1;
+    window.score = 0;
     backToMenu();
 }
 
@@ -367,13 +367,13 @@ function resetAllLevels() {
 function updateScoreDisplay() {
     const scoreElement = document.getElementById('current-score');
     if (scoreElement) {
-        scoreElement.textContent = score;
+        scoreElement.textContent = window.score;
     }
 }
 
 // Select Color
 function selectColor(color, element) {
-    selectedColor = color;
+    window.selectedColor = color;
     const options = document.querySelectorAll('.color-option');
     options.forEach(opt => opt.classList.remove('selected'));
     element.classList.add('selected');
@@ -389,12 +389,12 @@ async function init() {
         }
         
         // Set initial selected color immediately
-        selectedColor = gamesConfig.snake.colors[0];
+        window.selectedColor = window.gamesConfig.snake.colors[0];
         
         // Load game modules
         await loadGameModules();
         console.log('All game modules loaded successfully');
-        modulesLoaded = true;
+        window.modulesLoaded = true;
         
         // Hide loading indicator
         if (loadingIndicator) {
@@ -408,33 +408,33 @@ async function init() {
         
         // Add event listeners for keyboard controls
         window.addEventListener('keydown', (e) => {
-            if (!gameActive) return;
+            if (!window.gameActive) return;
             
-            switch(currentGame) {
+            switch(window.currentGame) {
                 case 'snake':
                     switch(e.key) {
-                        case 'ArrowUp': if (snakeDirection !== 'down') snakeDirection = 'up'; break;
-                        case 'ArrowDown': if (snakeDirection !== 'up') snakeDirection = 'down'; break;
-                        case 'ArrowLeft': if (snakeDirection !== 'right') snakeDirection = 'left'; break;
-                        case 'ArrowRight': if (snakeDirection !== 'left') snakeDirection = 'right'; break;
+                        case 'ArrowUp': if (window.snakeDirection !== 'down') window.snakeDirection = 'up'; break;
+                        case 'ArrowDown': if (window.snakeDirection !== 'up') window.snakeDirection = 'down'; break;
+                        case 'ArrowLeft': if (window.snakeDirection !== 'right') window.snakeDirection = 'left'; break;
+                        case 'ArrowRight': if (window.snakeDirection !== 'left') window.snakeDirection = 'right'; break;
                     }
                     break;
                     
                 case 'geometry-dash':
-                    if (e.key === ' ' && !gdPlayer.jumping) {
-                        gdPlayer.velocityY = gdPlayer.jumpForce;
-                        gdPlayer.jumping = true;
+                    if (e.key === ' ' && !window.gdPlayer.jumping) {
+                        window.gdPlayer.velocityY = window.gdPlayer.jumpForce;
+                        window.gdPlayer.jumping = true;
                     }
                     break;
                     
                 case 'go-around':
-                    if (e.key === 'ArrowLeft') goAroundPlayer.rotateLeft = true;
-                    if (e.key === 'ArrowRight') goAroundPlayer.rotateRight = true;
+                    if (e.key === 'ArrowLeft') window.goAroundPlayer.rotateLeft = true;
+                    if (e.key === 'ArrowRight') window.goAroundPlayer.rotateRight = true;
                     break;
                     
                 case 'flappy-bird':
                     if (e.key === ' ') {
-                        fbBird.velocityY = fbBird.jumpForce;
+                        window.fbBird.velocityY = window.fbBird.jumpForce;
                     }
                     break;
                     
@@ -445,11 +445,11 @@ async function init() {
         });
         
         window.addEventListener('keyup', (e) => {
-            if (!gameActive) return;
+            if (!window.gameActive) return;
             
-            if (currentGame === 'go-around') {
-                if (e.key === 'ArrowLeft') goAroundPlayer.rotateLeft = false;
-                if (e.key === 'ArrowRight') goAroundPlayer.rotateRight = false;
+            if (window.currentGame === 'go-around') {
+                if (e.key === 'ArrowLeft') window.goAroundPlayer.rotateLeft = false;
+                if (e.key === 'ArrowRight') window.goAroundPlayer.rotateRight = false;
             }
         });
         
@@ -460,3 +460,12 @@ async function init() {
 
 // Start the application when the page loads
 window.addEventListener('load', init);
+
+// Expose functions to window for onclick handlers
+window.loadGame = loadGame;
+window.backToMenu = backToMenu;
+window.restartGame = restartGame;
+window.nextLevel = nextLevel;
+window.resetAllLevels = resetAllLevels;
+window.updateScoreDisplay = updateScoreDisplay;
+window.selectColor = selectColor;

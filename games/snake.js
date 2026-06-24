@@ -4,10 +4,13 @@ let snakeDirection = 'right';
 let snakeFood = {};
 let snakeSpeed = 150;
 let snakeGridSize = 20;
-let snakeGridWidth = canvas.width / snakeGridSize;
-let snakeGridHeight = canvas.height / snakeGridSize;
+let snakeGridWidth = 0;
+let snakeGridHeight = 0;
 
 function initSnakeGame() {
+    // Calculate grid dimensions based on canvas
+    snakeGridWidth = Math.floor(canvas.width / snakeGridSize);
+    snakeGridHeight = Math.floor(canvas.height / snakeGridSize);
     gameActive = true;
     snake = [{x: 5, y: 10}];
     snakeDirection = 'right';
