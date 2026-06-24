@@ -1,12 +1,5 @@
 // Snake Game
 let snake = [];
-
-export function initSnakeGame() {
-=======
-// Snake Game
-let snake = [];
-
-function initSnakeGame() {
 let snakeDirection = 'right';
 let snakeFood = {};
 let snakeSpeed = 150;
