@@ -1,5 +1,5 @@
 // Shark Clicker Game
-export function initSharkClickerGame() {
+function initSharkClickerGame() {
     gameActive = true;
     clickerScore = 0;
     score = 0;

@@ -3,7 +3,7 @@ let ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
 let ticTacToeCurrentPlayer = 'X';
 let ticTacToeGameOver = false;
 
-export function initTicTacToeGame() {
+function initTicTacToeGame() {
     gameActive = true;
     ticTacToeBoard = ['', '', '', '', '', '', '', '', ''];
     ticTacToeCurrentPlayer = 'X';

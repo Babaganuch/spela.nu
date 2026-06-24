@@ -4,7 +4,7 @@ const mcBlocks = [];
 const mcInventory = {wood: 0, stone: 0, diamond: 0};
 let mcScore = 0;
 
-export function initMinecraftGame() {
+function initMinecraftGame() {
     gameActive = true;
     mcPlayer.x = canvas.width/2;
     mcPlayer.y = canvas.height/2;

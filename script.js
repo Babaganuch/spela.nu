@@ -116,38 +116,47 @@ window.initTicTacToeGame = null;
 window.initSharkClickerGame = null;
 window.initMinecraftGame = null;
 
-// Load Game Modules
-async function loadGameModules() {
-    try {
-        const modules = await Promise.all([
-            import('./games/snake.js'),
-            import('./games/geometry-dash.js'),
-            import('./games/go-around.js'),
-            import('./games/beaver-clicker.js'),
-            import('./games/flappy-bird.js'),
-            import('./games/block-blast.js'),
-            import('./games/2048.js'),
-            import('./games/tic-tac-toe.js'),
-            import('./games/shark-clicker.js'),
-            import('./games/minecraft.js')
-        ]);
+// Load Game Modules - using script tags instead of ES modules
+function loadGameModules() {
+    return new Promise((resolve, reject) => {
+        const gameFiles = [
+            './games/snake.js',
+            './games/geometry-dash.js',
+            './games/go-around.js',
+            './games/beaver-clicker.js',
+            './games/flappy-bird.js',
+            './games/block-blast.js',
+            './games/2048.js',
+            './games/tic-tac-toe.js',
+            './games/shark-clicker.js',
+            './games/minecraft.js'
+        ];
         
-        // Assign functions to global scope
-        window.initSnakeGame = modules[0].initSnakeGame;
-        window.initGeometryDashGame = modules[1].initGeometryDashGame;
-        window.initGoAroundGame = modules[2].initGoAroundGame;
-        window.initBeaverClickerGame = modules[3].initBeaverClickerGame;
-        window.initFlappyBirdGame = modules[4].initFlappyBirdGame;
-        window.initBlockBlastGame = modules[5].initBlockBlastGame;
-        window.init2048Game = modules[6].init2048Game;
-        window.initTicTacToeGame = modules[7].initTicTacToeGame;
-        window.initSharkClickerGame = modules[8].initSharkClickerGame;
-        window.initMinecraftGame = modules[9].initMinecraftGame;
+        let loadedCount = 0;
+        const totalGames = gameFiles.length;
         
-        console.log('All game modules loaded successfully');
-    } catch (error) {
-        console.error('Failed to load game modules:', error);
-    }
+        if (totalGames === 0) {
+            resolve();
+            return;
+        }
+        
+        gameFiles.forEach(file => {
+            const script = document.createElement('script');
+            script.src = file;
+            script.onload = () => {
+                loadedCount++;
+                if (loadedCount === totalGames) {
+                    console.log('All game modules loaded successfully');
+                    resolve();
+                }
+            };
+            script.onerror = (error) => {
+                console.error('Failed to load game module:', file, error);
+                reject(error);
+            };
+            document.head.appendChild(script);
+        });
+    });
 }
 
 // Load Game

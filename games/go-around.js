@@ -12,7 +12,7 @@ const goAroundBots = [];
 let goAroundBotTimer = 0;
 let goAroundScore = 0;
 
-export function initGoAroundGame() {
+function initGoAroundGame() {
     gameActive = true;
     goAroundPlayer.x = canvas.width / 2;
     goAroundPlayer.y = canvas.height / 2;
