@@ -4,7 +4,7 @@ let autoClickers = 0;
 let clickerMultiplier = 1;
 let autoClickerLoop = null;
 
-export function initBeaverClickerGame() {
+function initBeaverClickerGame() {
     gameActive = true;
     clickerScore = 0;
     score = 0;

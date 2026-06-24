@@ -7,7 +7,7 @@ const game2048 = {
     score: 0
 };
 
-export function init2048Game() {
+function init2048Game() {
     gameActive = true;
     game2048.grid = create2048Grid();
     game2048.tiles = [];

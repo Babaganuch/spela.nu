@@ -5,7 +5,7 @@ let fbPipeTimer = 0;
 let fbScore = 0;
 let fbPipeGap = 150;
 
-export function initFlappyBirdGame() {
+function initFlappyBirdGame() {
     gameActive = true;
     fbBird.x = 100;
     fbBird.y = 250;

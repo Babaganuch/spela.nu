@@ -7,7 +7,7 @@ let snakeGridSize = 20;
 let snakeGridWidth = canvas.width / snakeGridSize;
 let snakeGridHeight = canvas.height / snakeGridSize;
 
-export function initSnakeGame() {
+function initSnakeGame() {
     gameActive = true;
     snake = [{x: 5, y: 10}];
     snakeDirection = 'right';
