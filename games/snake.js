@@ -1,170 +1,140 @@
-// Snake Game (Phaser)
-// Self-contained: own keyboard input, own score, own game loop.
-// Phaser creates its own canvas inside the .game-wrapper (canonical setup),
-// avoiding canvas-reuse edge cases.
+// Snake Game (Phaser) — integrated into the main start page.
+// Self-contained: own keyboard input, own loop, own rendering.
+// Renders into a #phaser-game div inside the .game-wrapper created by
+// loadGame(), and drives the page's existing score / game-over / level
+// overlays rather than a private HUD.
+
+const GRID = 20;
+const COLS = 35;
+const ROWS = 25;
+const WIDTH = GRID * COLS;   // 700
+const HEIGHT = GRID * ROWS;  // 500
 
 class SnakeScene extends Phaser.Scene {
     constructor() {
-        super('snake');
+        super({ key: 'snake' });
     }
 
     create() {
-        this.GRID = 20;
-        this.WIDTH = this.scale.width;
-        this.HEIGHT = this.scale.height;
-        this.cols = Math.floor(this.WIDTH / this.GRID);
-        this.rows = Math.floor(this.HEIGHT / this.GRID);
-
-        this.headColor = Phaser.Display.Color.HexStringToColor(
-            (window.selectedColor && window.selectedColor !== '#FF5733')
-                ? window.selectedColor
-                : '#4CAF50'
-        ).color;
-        this.bodyColor = Phaser.Display.Color.HexStringToColor('#2E7D32').color;
-        this.foodColor = 0xFF5733;
-        this.bgColor = 0x111111;
-
-        this.snake = [{ x: 5, y: 10 }];
-        this.direction = 'right';
-        this.queuedDirection = 'right';
+        this.snake = [];
+        this.direction = { x: 1, y: 0 };
+        this.queuedDirection = { x: 1, y: 0 };
         this.snakeScore = 0;
-        this.running = true;
+        this.gameOver = false;
+
+        var startX = Math.floor(COLS / 5);
+        var startY = Math.floor(ROWS / 2);
+        for (var i = 0; i < 3; i++) {
+            this.snake.push({ x: startX - i, y: startY });
+        }
 
         this.placeFood();
 
-        // Single graphics object redrawn each frame (no accumulating objects).
+        // Colour chosen on the start page (defaults to green).
+        var sc = window.selectedColor;
+        this.headColor = (sc && sc !== '#FF5733') ? Phaser.Display.Color.HexStringToColor(sc).color : 0x4CAF50;
+        this.bodyColor = 0x2E7D32;
+
         this.gfx = this.add.graphics();
 
-        this.moveTimer = this.time.addEvent({
+        this.moveEvent = this.time.addEvent({
             delay: 200,
             loop: true,
             callback: this.step,
             callbackScope: this
         });
 
-        // Keyboard input managed here, so there is no shared-state mismatch.
         this.input.keyboard.on('keydown', (e) => {
-            if (!this.running) return;
-            switch (e.key) {
-                case 'ArrowUp':
-                    if (this.direction !== 'down') this.queuedDirection = 'up';
-                    break;
-                case 'ArrowDown':
-                    if (this.direction !== 'up') this.queuedDirection = 'down';
-                    break;
-                case 'ArrowLeft':
-                    if (this.direction !== 'right') this.queuedDirection = 'left';
-                    break;
-                case 'ArrowRight':
-                    if (this.direction !== 'left') this.queuedDirection = 'right';
-                    break;
-            }
+            if (this.gameOver) return;
+            var d = this.direction;
+            if (e.key === 'ArrowUp' && d.y === 0) this.queuedDirection = { x: 0, y: -1 };
+            else if (e.key === 'ArrowDown' && d.y === 0) this.queuedDirection = { x: 0, y: 1 };
+            else if (e.key === 'ArrowLeft' && d.x === 0) this.queuedDirection = { x: -1, y: 0 };
+            else if (e.key === 'ArrowRight' && d.x === 0) this.queuedDirection = { x: 1, y: 0 };
         });
 
         this.draw();
     }
 
     step() {
-        if (!this.running) return;
+        if (this.gameOver) return;
         this.direction = this.queuedDirection;
+        var head = { x: this.snake[0].x + this.direction.x, y: this.snake[0].y + this.direction.y };
 
-        const head = { x: this.snake[0].x, y: this.snake[0].y };
-        switch (this.direction) {
-            case 'up': head.y--; break;
-            case 'down': head.y++; break;
-            case 'left': head.x--; break;
-            case 'right': head.x++; break;
-        }
-
-        // Wall collision
-        if (head.x < 0 || head.x >= this.cols || head.y < 0 || head.y >= this.rows) {
-            this.endGame();
-            return;
-        }
-
-        // Self collision
-        for (const seg of this.snake) {
-            if (seg.x === head.x && seg.y === head.y) {
-                this.endGame();
-                return;
-            }
+        if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) { this.endGame(); return; }
+        for (var i = 0; i < this.snake.length; i++) {
+            if (this.snake[i].x === head.x && this.snake[i].y === head.y) { this.endGame(); return; }
         }
 
         this.snake.unshift(head);
-
-        if (head.x === this.food.x && head.y === this.food.y) {
+        if (head.x === this.foodCell.x && head.y === this.foodCell.y) {
             this.snakeScore += 10;
             window.score = this.snakeScore;
-            if (typeof window.updateScoreDisplay === 'function') window.updateScoreDisplay();
             this.placeFood();
+            if (typeof window.updateScoreDisplay === 'function') window.updateScoreDisplay();
 
-            const target = window.gamesConfig.snake.pointsPerLevel[window.currentLevel - 1];
-            if (this.snakeScore >= target) {
-                this.levelComplete();
-                return;
-            }
+            var target = window.gamesConfig.snake.pointsPerLevel[window.currentLevel - 1];
+            if (this.snakeScore >= target) { this.levelComplete(); return; }
         } else {
             this.snake.pop();
         }
-
         this.draw();
     }
 
     placeFood() {
-        let pos;
+        var x, y, occupied;
         do {
-            pos = {
-                x: Math.floor(Math.random() * this.cols),
-                y: Math.floor(Math.random() * this.rows)
-            };
-        } while (this.snake.some(s => s.x === pos.x && s.y === pos.y));
-        this.food = pos;
+            x = Phaser.Math.Between(0, COLS - 1);
+            y = Phaser.Math.Between(0, ROWS - 1);
+            occupied = false;
+            for (var i = 0; i < this.snake.length; i++) {
+                if (this.snake[i].x === x && this.snake[i].y === y) { occupied = true; break; }
+            }
+        } while (occupied);
+        this.foodCell = { x: x, y: y };
     }
 
     draw() {
-        const g = this.gfx;
+        var g = this.gfx;
         g.clear();
-
         // background
-        g.fillStyle(this.bgColor, 1);
-        g.fillRect(0, 0, this.WIDTH, this.HEIGHT);
-
+        g.fillStyle(0x111111, 1);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+        // subtle grid lines for a refreshed look
+        g.fillStyle(0x1c1c1c, 1);
+        for (var gx = 0; gx <= COLS; gx++) g.fillRect(gx * GRID, 0, 1, HEIGHT);
+        for (var gy = 0; gy <= ROWS; gy++) g.fillRect(0, gy * GRID, WIDTH, 1);
         // food
-        g.fillStyle(this.foodColor, 1);
-        g.fillCircle(
-            this.food.x * this.GRID + this.GRID / 2,
-            this.food.y * this.GRID + this.GRID / 2,
-            this.GRID / 2
-        );
-
+        g.fillStyle(0xFF5733, 1);
+        g.fillCircle(this.foodCell.x * GRID + GRID / 2, this.foodCell.y * GRID + GRID / 2, GRID / 2);
         // snake
-        this.snake.forEach((seg, i) => {
+        for (var i = 0; i < this.snake.length; i++) {
             g.fillStyle(i === 0 ? this.headColor : this.bodyColor, 1);
-            g.fillRect(seg.x * this.GRID, seg.y * this.GRID, this.GRID, this.GRID);
-        });
+            g.fillRect(this.snake[i].x * GRID, this.snake[i].y * GRID, GRID, GRID);
+        }
     }
 
     endGame() {
-        this.running = false;
-        this.moveTimer.remove();
+        this.gameOver = true;
+        this.moveEvent.remove();
         window.gameActive = false;
-        const fs = document.getElementById('final-score');
+        var fs = document.getElementById('final-score');
         if (fs) fs.textContent = this.snakeScore;
-        const go = document.getElementById('game-over');
+        var go = document.getElementById('game-over');
         if (go) go.classList.add('active');
     }
 
     levelComplete() {
-        this.running = false;
-        this.moveTimer.remove();
+        this.gameOver = true;
+        this.moveEvent.remove();
         window.gameActive = false;
         if (window.currentLevel >= window.gamesConfig.snake.levels) {
-            const all = document.getElementById('all-levels-complete');
+            var all = document.getElementById('all-levels-complete');
             if (all) all.classList.add('active');
         } else {
-            const ls = document.getElementById('level-score');
+            var ls = document.getElementById('level-score');
             if (ls) ls.textContent = this.snakeScore;
-            const lc = document.getElementById('level-complete');
+            var lc = document.getElementById('level-complete');
             if (lc) lc.classList.add('active');
         }
     }
@@ -173,25 +143,25 @@ class SnakeScene extends Phaser.Scene {
 function initSnakeGame() {
     window.gameActive = true;
 
-    // Destroy any previous Phaser instance.
     if (window.phaserGame) {
         window.phaserGame.destroy(true);
         window.phaserGame = null;
     }
 
-    // Phaser creates its own canvas injected into the game wrapper,
-    // where the generic #game-canvas used to live, so it sits among the
-    // header / score / overlay elements.
-    const oldCanvas = document.getElementById('game-canvas');
+    // The generic #game-canvas is unused by Phaser; replace it with a
+    // dedicated container so the Phaser canvas is injected predictably.
+    var oldCanvas = document.getElementById('game-canvas');
+    var parent = oldCanvas ? oldCanvas.parentNode : document.querySelector('.game-wrapper');
     if (oldCanvas) oldCanvas.remove();
-
-    const wrapper = document.querySelector('.game-wrapper');
+    var holder = document.createElement('div');
+    holder.id = 'phaser-game';
+    if (parent) parent.appendChild(holder);
 
     window.phaserGame = new Phaser.Game({
         type: Phaser.AUTO,
-        parent: wrapper || 'game-container',
-        width: 700,
-        height: 500,
+        parent: 'phaser-game',
+        width: WIDTH,
+        height: HEIGHT,
         backgroundColor: '#111111',
         scene: SnakeScene,
         input: { keyboard: true }
