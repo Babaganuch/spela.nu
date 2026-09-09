@@ -449,6 +449,29 @@ async function init() {
 // Start the application when the page loads
 window.addEventListener('load', init);
 
+// Höstlov countdown (Skåne, vecka 44, 27 oktober 2025)
+function updateHostlovCountdown() {
+    const target = new Date('2025-10-27T00:00:00+02:00');
+    const now = new Date();
+    const diff = target - now;
+    const el = document.getElementById('hostlov-countdown');
+    if (!el) return;
+    if (diff <= 0) {
+        el.textContent = 'Det \u00e4r h\u00f6stlov! \ud83c\udfa8';
+        return;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const dStr = days + (days === 1 ? ' dag' : ' dagar');
+    const hStr = hours + (hours === 1 ? ' timme' : ' timmar');
+    const mStr = minutes + (minutes === 1 ? ' minut' : ' minuter');
+    el.textContent = dStr + ', ' + hStr + ' och ' + mStr + ' kvar till h\u00f6stlov i Sk\u00e5ne! \ud83c\udf41';
+}
+
+updateHostlovCountdown();
+setInterval(updateHostlovCountdown, 60000);
+
 // Expose functions to window for onclick handlers
 window.loadGame = loadGame;
 window.backToMenu = backToMenu;
