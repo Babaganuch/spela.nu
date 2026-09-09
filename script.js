@@ -285,6 +285,10 @@ function backToMenu() {
         clearInterval(window.gameLoop);
         window.gameLoop = null;
     }
+    if (window.phaserGame) {
+        window.phaserGame.destroy(true);
+        window.phaserGame = null;
+    }
     window.gameActive = false;
     // Save progress
     if (window.currentGame) {
@@ -399,15 +403,6 @@ async function init() {
             if (!window.gameActive) return;
             
             switch(window.currentGame) {
-                case 'snake':
-                    switch(e.key) {
-                        case 'ArrowUp': if (window.snakeDirection !== 'down') window.snakeDirection = 'up'; break;
-                        case 'ArrowDown': if (window.snakeDirection !== 'up') window.snakeDirection = 'down'; break;
-                        case 'ArrowLeft': if (window.snakeDirection !== 'right') window.snakeDirection = 'left'; break;
-                        case 'ArrowRight': if (window.snakeDirection !== 'left') window.snakeDirection = 'right'; break;
-                    }
-                    break;
-                    
                 case 'geometry-dash':
                     if (e.key === ' ' && !window.gdPlayer.jumping) {
                         window.gdPlayer.velocityY = window.gdPlayer.jumpForce;
