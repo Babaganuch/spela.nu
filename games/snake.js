@@ -1,6 +1,7 @@
 // Snake Game (Phaser)
 // Self-contained: own keyboard input, own score, own game loop.
-// Renders onto the #game-canvas element created by loadGame().
+// Phaser creates its own canvas inside the .game-wrapper (canonical setup),
+// avoiding canvas-reuse edge cases.
 
 class SnakeScene extends Phaser.Scene {
     constructor() {
@@ -14,10 +15,14 @@ class SnakeScene extends Phaser.Scene {
         this.cols = Math.floor(this.WIDTH / this.GRID);
         this.rows = Math.floor(this.HEIGHT / this.GRID);
 
-        this.headColor = (window.selectedColor && window.selectedColor !== '#FF5733')
-            ? window.selectedColor
-            : '#4CAF50';
-        this.bodyColor = '#2E7D32';
+        this.headColor = Phaser.Display.Color.HexStringToColor(
+            (window.selectedColor && window.selectedColor !== '#FF5733')
+                ? window.selectedColor
+                : '#4CAF50'
+        ).color;
+        this.bodyColor = Phaser.Display.Color.HexStringToColor('#2E7D32').color;
+        this.foodColor = 0xFF5733;
+        this.bgColor = 0x111111;
 
         this.snake = [{ x: 5, y: 10 }];
         this.direction = 'right';
@@ -27,6 +32,9 @@ class SnakeScene extends Phaser.Scene {
 
         this.placeFood();
 
+        // Single graphics object redrawn each frame (no accumulating objects).
+        this.gfx = this.add.graphics();
+
         this.moveTimer = this.time.addEvent({
             delay: 200,
             loop: true,
@@ -34,8 +42,7 @@ class SnakeScene extends Phaser.Scene {
             callbackScope: this
         });
 
-        // Keyboard input — managed here, not in script.js, so there is
-        // no shared-state binding mismatch.
+        // Keyboard input managed here, so there is no shared-state mismatch.
         this.input.keyboard.on('keydown', (e) => {
             if (!this.running) return;
             switch (e.key) {
@@ -115,23 +122,25 @@ class SnakeScene extends Phaser.Scene {
     }
 
     draw() {
-        this.add.rectangle(0, 0, this.WIDTH, this.HEIGHT, 0x111111).setOrigin(0, 0);
+        const g = this.gfx;
+        g.clear();
+
+        // background
+        g.fillStyle(this.bgColor, 1);
+        g.fillRect(0, 0, this.WIDTH, this.HEIGHT);
 
         // food
-        this.add.circle(
+        g.fillStyle(this.foodColor, 1);
+        g.fillCircle(
             this.food.x * this.GRID + this.GRID / 2,
             this.food.y * this.GRID + this.GRID / 2,
-            this.GRID / 2,
-            0xFF5733
+            this.GRID / 2
         );
 
         // snake
         this.snake.forEach((seg, i) => {
-            this.add.rectangle(
-                seg.x * this.GRID, seg.y * this.GRID,
-                this.GRID, this.GRID,
-                Phaser.Display.Color.HexStringToColor(i === 0 ? this.headColor : this.bodyColor).color
-            ).setOrigin(0, 0);
+            g.fillStyle(i === 0 ? this.headColor : this.bodyColor, 1);
+            g.fillRect(seg.x * this.GRID, seg.y * this.GRID, this.GRID, this.GRID);
         });
     }
 
@@ -162,18 +171,25 @@ class SnakeScene extends Phaser.Scene {
 }
 
 function initSnakeGame() {
-    const canvasEl = document.getElementById('game-canvas');
     window.gameActive = true;
 
-    // Destroy any previous Phaser instance for this canvas.
+    // Destroy any previous Phaser instance.
     if (window.phaserGame) {
         window.phaserGame.destroy(true);
         window.phaserGame = null;
     }
 
+    // Phaser creates its own canvas injected into the game wrapper,
+    // where the generic #game-canvas used to live, so it sits among the
+    // header / score / overlay elements.
+    const oldCanvas = document.getElementById('game-canvas');
+    if (oldCanvas) oldCanvas.remove();
+
+    const wrapper = document.querySelector('.game-wrapper');
+
     window.phaserGame = new Phaser.Game({
-        type: Phaser.CANVAS,
-        canvas: canvasEl,
+        type: Phaser.AUTO,
+        parent: wrapper || 'game-container',
         width: 700,
         height: 500,
         backgroundColor: '#111111',
