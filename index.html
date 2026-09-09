@@ -62,8 +62,15 @@
     </div>
     
     <div id="game-container"></div>
+    <div id="error-log" style="position:fixed;bottom:0;left:0;right:0;background:#400;color:#ff8080;font-family:monospace;font-size:12px;padding:8px;max-height:30vh;overflow:auto;z-index:9999;display:none;"></div>
     
-    <script src="https://cdn.jsdelivr.net/npm/[email protected]/dist/phaser.min.js"></script>
+    <script>
+        window.addEventListener('error', function (e) {
+            var el = document.getElementById('error-log');
+            if (el) { el.style.display = 'block'; el.textContent += (e.message || e) + (e.filename ? ' @ ' + e.filename + ':' + e.lineno : '') + '\n'; }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
