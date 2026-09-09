@@ -61,12 +61,6 @@ window.gamesConfig = {
         pointsPerLevel: [10, 20, 30, 40, 50],
         colors: []
     },
-    'shark-clicker': {
-        name: 'Haj Clicker',
-        levels: 5,
-        pointsPerLevel: [20, 40, 60, 80, 100],
-        colors: []
-    },
     'minecraft': {
         name: 'Minecraft',
         levels: 5,
@@ -85,7 +79,6 @@ window.userProgress = {
     'block-blast': { level: 1, score: 0, unlocked: false },
     '2048': { level: 1, score: 0, unlocked: true },
     'tic-tac-toe': { level: 1, score: 0, unlocked: true },
-    'shark-clicker': { level: 1, score: 0, unlocked: true },
     minecraft: { level: 1, score: 0, unlocked: false }
 };
 
@@ -113,7 +106,6 @@ window.initFlappyBirdGame = null;
 window.initBlockBlastGame = null;
 window.init2048Game = null;
 window.initTicTacToeGame = null;
-window.initSharkClickerGame = null;
 window.initMinecraftGame = null;
 
 // Load Game Modules - using script tags instead of ES modules
@@ -128,7 +120,6 @@ function loadGameModules() {
             './games/block-blast.js',
             './games/2048.js',
             './games/tic-tac-toe.js',
-            './games/shark-clicker.js',
             './games/minecraft.js'
         ];
         
@@ -280,7 +271,6 @@ function loadGame(gameId) {
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
         case 'tic-tac-toe': initTicTacToeGame(); break;
-        case 'shark-clicker': initSharkClickerGame(); break;
         case '2048': init2048Game(); break;
         case 'minecraft': initMinecraftGame(); break;
     }
@@ -315,7 +305,6 @@ function restartGame() {
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
         case 'tic-tac-toe': initTicTacToeGame(); break;
-        case 'shark-clicker': initSharkClickerGame(); break;
         case '2048': init2048Game(); break;
         case 'minecraft': initMinecraftGame(); break;
     }
@@ -348,7 +337,6 @@ function nextLevel() {
         case 'flappy-bird': initFlappyBirdGame(); break;
         case 'block-blast': initBlockBlastGame(); break;
         case 'tic-tac-toe': initTicTacToeGame(); break;
-        case 'shark-clicker': initSharkClickerGame(); break;
         case '2048': init2048Game(); break;
         case 'minecraft': initMinecraftGame(); break;
     }
