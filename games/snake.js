@@ -1,7 +1,7 @@
 // Snake Game
-let snake = [];
-let snakeDirection = 'right';
-let snakeFood = {};
+window.snake = [];
+window.snakeDirection = 'right';
+window.snakeFood = {};
 let snakeSpeed = 150;
 let snakeGridSize = 20;
 let snakeGridWidth = 0;
@@ -11,21 +11,21 @@ function initSnakeGame() {
     // Calculate grid dimensions based on canvas
     snakeGridWidth = Math.floor(canvas.width / snakeGridSize);
     snakeGridHeight = Math.floor(canvas.height / snakeGridSize);
-    gameActive = true;
-    snake = [{x: 5, y: 10}];
-    snakeDirection = 'right';
+    window.gameActive = true;
+    window.snake = [{x: 5, y: 10}];
+    window.snakeDirection = 'right';
     placeSnakeFood();
     
-    if (gameLoop) clearInterval(gameLoop);
-    gameLoop = setInterval(updateSnakeGame, snakeSpeed);
+    if (window.gameLoop) clearInterval(window.gameLoop);
+    window.gameLoop = setInterval(updateSnakeGame, snakeSpeed);
 }
 
 function updateSnakeGame() {
-    if (!gameActive) return;
+    if (!window.gameActive) return;
     
     // Move snake
-    const head = {...snake[0]};
-    switch(snakeDirection) {
+    const head = {...window.snake[0]};
+    switch(window.snakeDirection) {
         case 'up': head.y--; break;
         case 'down': head.y++; break;
         case 'left': head.x--; break;
@@ -39,30 +39,30 @@ function updateSnakeGame() {
     }
     
     // Check for self collision
-    for (let i = 0; i < snake.length; i++) {
-        if (head.x === snake[i].x && head.y === snake[i].y) {
+    for (let i = 0; i < window.snake.length; i++) {
+        if (head.x === window.snake[i].x && head.y === window.snake[i].y) {
             gameOver();
             return;
         }
     }
     
     // Add new head
-    snake.unshift(head);
+    window.snake.unshift(head);
     
     // Check if snake ate food
-    if (head.x === snakeFood.x && head.y === snakeFood.y) {
-        score += 10;
+    if (head.x === window.snakeFood.x && head.y === window.snakeFood.y) {
+        window.score += 10;
         updateScoreDisplay();
         placeSnakeFood();
         
         // Check if level is complete
-        if (score >= gamesConfig.snake.pointsPerLevel[currentLevel - 1]) {
+        if (window.score >= window.gamesConfig.snake.pointsPerLevel[window.currentLevel - 1]) {
             levelComplete();
             return;
         }
     } else {
         // Remove tail if no food eaten
-        snake.pop();
+        window.snake.pop();
     }
     
     // Draw
@@ -81,7 +81,7 @@ function placeSnakeFood() {
         
         // Check if food is on snake
         validPosition = true;
-        for (const segment of snake) {
+        for (const segment of window.snake) {
             if (segment.x === newFoodPosition.x && segment.y === newFoodPosition.y) {
                 validPosition = false;
                 break;
@@ -89,7 +89,7 @@ function placeSnakeFood() {
         }
     }
     
-    snakeFood = newFoodPosition;
+    window.snakeFood = newFoodPosition;
 }
 
 function drawSnakeGame() {
@@ -98,7 +98,7 @@ function drawSnakeGame() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Draw snake
-    snake.forEach((segment, index) => {
+    window.snake.forEach((segment, index) => {
         ctx.fillStyle = index === 0 ? selectedColor : '#4CAF50';
         ctx.fillRect(segment.x * snakeGridSize, segment.y * snakeGridSize, snakeGridSize, snakeGridSize);
         
@@ -108,32 +108,32 @@ function drawSnakeGame() {
             const eyeOffset = snakeGridSize / 3;
             
             ctx.fillStyle = 'white';
-            if (snakeDirection === 'right' || snakeDirection === 'left') {
-                ctx.fillRect(segment.x * snakeGridSize + (snakeDirection === 'right' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
+            if (window.snakeDirection === 'right' || window.snakeDirection === 'left') {
+                ctx.fillRect(segment.x * snakeGridSize + (window.snakeDirection === 'right' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
                             segment.y * snakeGridSize + eyeOffset, eyeSize, eyeSize);
-                ctx.fillRect(segment.x * snakeGridSize + (snakeDirection === 'right' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
+                ctx.fillRect(segment.x * snakeGridSize + (window.snakeDirection === 'right' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
                             segment.y * snakeGridSize + snakeGridSize - eyeOffset - eyeSize, eyeSize, eyeSize);
             } else {
                 ctx.fillRect(segment.x * snakeGridSize + eyeOffset,
-                            segment.y * snakeGridSize + (snakeDirection === 'down' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
+                            segment.y * snakeGridSize + (window.snakeDirection === 'down' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
                             eyeSize, eyeSize);
                 ctx.fillRect(segment.x * snakeGridSize + snakeGridSize - eyeOffset - eyeSize,
-                            segment.y * snakeGridSize + (snakeDirection === 'down' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
+                            segment.y * snakeGridSize + (window.snakeDirection === 'down' ? eyeOffset : snakeGridSize - eyeOffset - eyeSize),
                             eyeSize, eyeSize);
             }
             
             ctx.fillStyle = 'black';
-            if (snakeDirection === 'right' || snakeDirection === 'left') {
-                ctx.fillRect(segment.x * snakeGridSize + (snakeDirection === 'right' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
+            if (window.snakeDirection === 'right' || window.snakeDirection === 'left') {
+                ctx.fillRect(segment.x * snakeGridSize + (window.snakeDirection === 'right' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
                             segment.y * snakeGridSize + eyeOffset + eyeSize/3, eyeSize/3, eyeSize/3);
-                ctx.fillRect(segment.x * snakeGridSize + (snakeDirection === 'right' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
+                ctx.fillRect(segment.x * snakeGridSize + (window.snakeDirection === 'right' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
                             segment.y * snakeGridSize + snakeGridSize - eyeOffset - eyeSize + eyeSize/3, eyeSize/3, eyeSize/3);
             } else {
                 ctx.fillRect(segment.x * snakeGridSize + eyeOffset + eyeSize/3,
-                            segment.y * snakeGridSize + (snakeDirection === 'down' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
+                            segment.y * snakeGridSize + (window.snakeDirection === 'down' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
                             eyeSize/3, eyeSize/3);
                 ctx.fillRect(segment.x * snakeGridSize + snakeGridSize - eyeOffset - eyeSize + eyeSize/3,
-                            segment.y * snakeGridSize + (snakeDirection === 'down' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
+                            segment.y * snakeGridSize + (window.snakeDirection === 'down' ? eyeOffset + eyeSize/3 : snakeGridSize - eyeOffset - eyeSize + eyeSize/3),
                             eyeSize/3, eyeSize/3);
             }
         }
@@ -142,32 +142,32 @@ function drawSnakeGame() {
     // Draw food
     ctx.fillStyle = '#FF5733';
     ctx.beginPath();
-    ctx.arc(snakeFood.x * snakeGridSize + snakeGridSize/2, snakeFood.y * snakeGridSize + snakeGridSize/2, snakeGridSize/2, 0, Math.PI * 2);
+    ctx.arc(window.snakeFood.x * snakeGridSize + snakeGridSize/2, window.snakeFood.y * snakeGridSize + snakeGridSize/2, snakeGridSize/2, 0, Math.PI * 2);
     ctx.fill();
 }
 
 function gameOver() {
-    gameActive = false;
-    if (gameLoop) {
-        clearInterval(gameLoop);
-        gameLoop = null;
+    window.gameActive = false;
+    if (window.gameLoop) {
+        clearInterval(window.gameLoop);
+        window.gameLoop = null;
     }
-    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-score').textContent = window.score;
     document.getElementById('game-over').classList.add('active');
 }
 
 function levelComplete() {
-    gameActive = false;
-    if (gameLoop) {
-        clearInterval(gameLoop);
-        gameLoop = null;
+    window.gameActive = false;
+    if (window.gameLoop) {
+        clearInterval(window.gameLoop);
+        window.gameLoop = null;
     }
     
     // Check if all levels are complete
-    if (currentLevel >= gamesConfig.snake.levels) {
+    if (window.currentLevel >= window.gamesConfig.snake.levels) {
         document.getElementById('all-levels-complete').classList.add('active');
     } else {
-        document.getElementById('level-score').textContent = score;
+        document.getElementById('level-score').textContent = window.score;
         document.getElementById('level-complete').classList.add('active');
     }
 }
