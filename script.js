@@ -449,9 +449,29 @@ async function init() {
 // Start the application when the page loads
 window.addEventListener('load', init);
 
-// Höstlov countdown (Skåne, vecka 44, 27 oktober 2025)
+// Höstlov countdown (Skåne, alltid vecka 44)
+// Compute the Monday of ISO week 44 for the given year.
+function mondayOfWeek44(year) {
+    const jan4 = new Date(Date.UTC(year, 0, 4));
+    const day = jan4.getUTCDay();
+    const mondayW1 = new Date(jan4);
+    mondayW1.setUTCDate(jan4.getUTCDate() - ((day + 6) % 7));
+    const w44 = new Date(mondayW1);
+    w44.setUTCDate(mondayW1.getUTCDate() + 43 * 7);
+    return w44;
+}
+
+function nextHostlovStart() {
+    const now = new Date();
+    let target = mondayOfWeek44(now.getUTCFullYear());
+    if (target.getTime() <= now.getTime()) {
+        target = mondayOfWeek44(now.getUTCFullYear() + 1);
+    }
+    return new Date(target.getTime() + 2 * 3600000);
+}
+
 function updateHostlovCountdown() {
-    const target = new Date('2025-10-27T00:00:00+02:00');
+    const target = nextHostlovStart();
     const now = new Date();
     const diff = target - now;
     const el = document.getElementById('hostlov-countdown');
